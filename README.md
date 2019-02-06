@@ -2,7 +2,7 @@
 
 ## Contributors
 - Rebecca
-- Erik
+- Erik BJ
 - Martin
 - Ole Martin
 - Vegard
