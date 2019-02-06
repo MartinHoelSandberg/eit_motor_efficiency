@@ -4,7 +4,7 @@
 - Rebecca
 - Erik BJ
 - Martin
-- Ole Martin
+- Ole Martin Gjerde
 - Vegard
 - Marius
 
