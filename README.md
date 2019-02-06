@@ -1,6 +1,6 @@
-# H1 EiT Project
+# EiT Project
 
-## H2 Goal
+## Goal
 Predict **power usage** based on the engine usage and sensor data. 
 
 ---
