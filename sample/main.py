@@ -3,7 +3,6 @@ from os import listdir
 from os.path import join
 from numpy import genfromtxt
 import glob
-import matplotlib.pyplot as plt
 
 import analyze_csv as csv_import
 
@@ -13,9 +12,17 @@ from keras.preprocessing.sequence import TimeseriesGenerator
 
 from keras.utils import plot_model
 
+from sys import platform as sys_pf
+  
 
+from sys import platform as sys_pf
+if sys_pf == 'darwin':
+    import matplotlib
+    matplotlib.use("TkAgg")
+else:
+    import matplotlib
 
-
+from matplotlib import pyplot as plt
 
 
 def average_model(motor_rpm):
@@ -111,8 +118,6 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 
-
-
 batch_size = 200
 data_gen_train = TimeseriesGenerator(X_train, Y_train,
                                length=recursive_depth,
@@ -126,18 +131,14 @@ data_gen_test = TimeseriesGenerator(X_test, Y_test,
 model.fit_generator(data_gen_train, epochs=7)
 
 
-
-plot_model(model, to_file='model.png')
-
-
 y_train = model.predict_generator(data_gen_train)
 y_test = model.predict_generator(data_gen_test)
 
-plt.figure()
+plt.figure(1)
 plt.plot(Y_train)
 plt.plot(np.append(np.zeros(recursive_depth), y_train))
 
-plt.figure()
+plt.figure(2)
 plt.plot(Y_test)
 plt.plot(np.append(np.zeros(recursive_depth), y_test))
 plt.plot(average_model(X_test[1:5]))
