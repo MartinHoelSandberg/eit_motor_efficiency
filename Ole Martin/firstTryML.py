@@ -31,10 +31,10 @@ from matplotlib import pyplot as plt
 
 # normalisere dataen til -1, 1.
 def normalizeData (inputData):
-    for i in range(0,len(data[0])):
-        norm = np.linalg.norm(inputData[:,i],np.inf)
-        inputData[:,i]=inputData[:,i]/norm
-        print(norm)
+    for i in range(0,len(inputData[0])):
+        mini = min(inputData[:,i])
+        maxi = max(inputData[:,i])
+        inputData[:,i]=(inputData[:,i]-mini-(maxi-mini)/2)/(maxi-mini)*2
     return inputData
 
 
