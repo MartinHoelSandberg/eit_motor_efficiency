@@ -37,8 +37,11 @@ def normalizeData (inputData):
         print(norm)
     return inputData
 
+
+
 # hente test og treningsdata fra Marius sin logg
-X_train,Y_train,X_test,Y_test = marius() 
+import data_storage #Velger Marius sin kode 
+data = data_storage.load_data_set("train") #henter dataen inn i data
 
 
 # Utfør normalisering
