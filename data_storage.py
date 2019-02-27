@@ -57,17 +57,29 @@ def add_to_dataset():
     folder = path.join(data_dir, log_name)
 
     channels = [
-        "SBS_F1_Steering_Angle",
         "AMK_FL_Actual_velocity",
         "AMK_FR_Actual_velocity",
         "AMK_RL_Actual_velocity",
         "AMK_RR_Actual_velocity",
-        "AMK_FL_Torque_current",
-        "AMK_FR_Torque_current",
-        "AMK_RL_Torque_current",
-        "AMK_RR_Torque_current",
-        "INS_Vx"
+        "AMK_FL_Temp_Motor",
+        "AMK_FR_Temp_Motor",
+        "AMK_RL_Temp_Motor",
+        "AMK_RR_Temp_Motor",
+        "AMK_FL_Temp_Inverter",
+        "AMK_FR_Temp_Inverter",
+        "AMK_RL_Temp_Inverter",
+        "AMK_RR_Temp_Inverter",
+        "AMK_FL_Setpoint_positive_torque_limit",
+        "AMK_FR_Setpoint_positive_torque_limit",
+        "AMK_RL_Setpoint_positive_torque_limit",
+        "AMK_RR_Setpoint_positive_torque_limit",
+        "BMS_Tractive_System_Power"
         ]
+    cell_number = 140
+    for i in range(0,cell_number):
+        channels.append("BMS_Cell_Temperature_" + str(i))
+
+
 
     filenames = [path.join(folder, channel) + ".csv" for channel in channels]
 
