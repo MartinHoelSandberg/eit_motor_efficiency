@@ -93,9 +93,6 @@ Y_test = Y[67000:110000]
 # Import endurance FSS
 folder = "./data/FSS_endurance"
 data = import_log(folder)
-
-
-
 data=normalizeData(data)
 
 X = data[:,input_indices]
