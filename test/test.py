@@ -11,5 +11,5 @@ for i in range(0,len(c[0])):
     cmin = min(c[:,i])
     cmax = max(c[:,i])
     d[:,i] = (c[:,i]-cmin-(cmax-cmin)/2)/(cmax-cmin)*2
-
-print(len(d[1,:])-2)
+x = range(len(d[1,:])-2)
+print(x)

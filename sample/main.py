@@ -25,11 +25,6 @@ else:
 from matplotlib import pyplot as plt
 
 
-def average_model(motor_rpm):
-    gear_ratio = 15.58
-    wheel_radius = 0.228
-    return np.mean(motor_rpm, axis=1) / gear_ratio / 60 * 2 * np.pi * wheel_radius
-
 def normalizeData (inputData):
     for i in range(0,len(inputData[0])):
         mini = min(inputData[:,i])
@@ -62,7 +57,7 @@ def import_log(folder):
         channels.append("BMS_Cell_Temperature_" + str(i))
     
     channels.append("BMS_Tractive_System_Power")
-
+    print(len(channels))
     filenames = [join(folder, channel) + ".csv" for channel in channels]
 
     raw_data = csv_import.read_csv_files(filenames)
@@ -75,7 +70,8 @@ def import_log(folder):
 folder = "./data/endurance fsg"
 data = import_log(folder)
 data = normalizeData(data)
-input_indices = range(len(data[:,1])-2)
+input_indices = range(0,156)
+print(input_indices)
 
 X = data[:,input_indices]
 Y = data[:,-1]
@@ -91,7 +87,7 @@ Y_test = Y[67000:110000]
 folder = "./data/FSS_endurance"
 data = import_log(folder)
 data=normalizeData(data)
-input_indices = range(len(data[:,1])-2)
+input_indices = range(0,156)
 
 X = data[:,input_indices]
 Y = data[:,-1]
