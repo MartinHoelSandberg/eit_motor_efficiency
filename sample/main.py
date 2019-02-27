@@ -30,6 +30,13 @@ def average_model(motor_rpm):
     wheel_radius = 0.228
     return np.mean(motor_rpm, axis=1) / gear_ratio / 60 * 2 * np.pi * wheel_radius
 
+def normalizeData (inputData):
+    for i in range(0,len(inputData[0])):
+        mini = min(inputData[:,i])
+        maxi = max(inputData[:,i])
+        inputData[:,i]=(inputData[:,i]-mini-(maxi-mini)/2)/(maxi-mini)*2
+    return inputData
+
 
 def import_log(folder):
     channels = [
@@ -71,6 +78,7 @@ input_indices = range(9)
 # Import endurance FSG
 folder = "./data/endurance fsg"
 data = import_log(folder)
+data = normalizeData(data)
 
 X = data[:,input_indices]
 Y = data[:,-1]
@@ -86,12 +94,7 @@ Y_test = Y[67000:110000]
 folder = "./data/FSS_endurance"
 data = import_log(folder)
 
-def normalizeData (inputData):
-    for i in range(0,len(inputData[0])):
-        mini = min(inputData[:,i])
-        maxi = max(inputData[:,i])
-        inputData[:,i]=(inputData[:,i]-mini-(maxi-mini)/2)/(maxi-mini)*2
-    return inputData
+
 
 data=normalizeData(data)
 
