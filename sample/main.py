@@ -25,6 +25,11 @@ else:
 from matplotlib import pyplot as plt
 
 
+def average_model(motor_rpm):
+    gear_ratio = 15.58
+    wheel_radius = 0.228
+    return np.mean(motor_rpm, axis=1) / gear_ratio / 60 * 2 * np.pi * wheel_radius
+
 def normalizeData (inputData):
     for i in range(0,len(inputData[0])):
         mini = min(inputData[:,i])
@@ -69,8 +74,10 @@ def import_log(folder):
 # Import endurance FSG
 folder = "./data/endurance fsg"
 data = import_log(folder)
+
+print(data[:,0])
 data = normalizeData(data)
-input_indices = range(0,156)
+input_indices = range(1,156)
 print(input_indices)
 
 X = data[:,input_indices]
@@ -87,7 +94,7 @@ Y_test = Y[67000:110000]
 folder = "./data/FSS_endurance"
 data = import_log(folder)
 data=normalizeData(data)
-input_indices = range(0,156)
+input_indices = range(1,156)
 
 X = data[:,input_indices]
 Y = data[:,-1]
@@ -127,7 +134,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 
-batch_size = 200
+batch_size = 256
 data_gen_train = TimeseriesGenerator(X_train, Y_train,
                                length=recursive_depth,
                                batch_size=batch_size)
@@ -137,7 +144,7 @@ data_gen_test = TimeseriesGenerator(X_test, Y_test,
                                batch_size=batch_size)                            
 
 
-model.fit_generator(data_gen_train, epochs=7)
+model.fit_generator(data_gen_train, epochs=20)
 
 
 y_train = model.predict_generator(data_gen_train)
