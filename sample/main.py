@@ -48,13 +48,14 @@ def import_log(folder):
         "AMK_FL_Setpoint_positive_torque_limit",
         "AMK_FR_Setpoint_positive_torque_limit",
         "AMK_RL_Setpoint_positive_torque_limit",
-        "AMK_RR_Setpoint_positive_torque_limit",
-        "BMS_Tractive_System_Power"
-                ]
+        "AMK_RR_Setpoint_positive_torque_limit"
+          ]
     cell_number = 140
     for i in range(0,cell_number):
         channels.append("BMS_Cell_Temperature_" + str(i))
-        
+    
+    channels.append("BMS_Tractive_System_Power")
+
     filenames = [join(folder, channel) + ".csv" for channel in channels]
 
     raw_data = csv_import.read_csv_files(filenames)
