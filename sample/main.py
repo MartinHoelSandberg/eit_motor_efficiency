@@ -53,7 +53,7 @@ def import_log(folder):
 
 
 
-input_indices = range(1,10)
+input_indices = range(9)
 
 
 # Import endurance FSG
