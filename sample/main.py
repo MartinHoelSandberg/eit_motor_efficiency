@@ -90,7 +90,7 @@ X_test = X[67000:110000]
 Y_test = Y[67000:110000]
 
 
-# Import endurance FSS
+# Import endurance Fss
 folder = "./data/FSS_endurance"
 data = import_log(folder)
 data=normalizeData(data)
