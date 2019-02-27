@@ -12,4 +12,4 @@ for i in range(0,len(c[0])):
     cmax = max(c[:,i])
     d[:,i] = (c[:,i]-cmin-(cmax-cmin)/2)/(cmax-cmin)*2
 
-print(d)
+print(len(d[1,:])-2)
