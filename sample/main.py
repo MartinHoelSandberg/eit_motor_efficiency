@@ -86,6 +86,15 @@ Y_test = Y[67000:110000]
 folder = "./data/FSS_endurance"
 data = import_log(folder)
 
+def normalizeData (inputData):
+    for i in range(0,len(inputData[0])):
+        mini = min(inputData[:,i])
+        maxi = max(inputData[:,i])
+        inputData[:,i]=(inputData[:,i]-mini-(maxi-mini)/2)/(maxi-mini)*2
+    return inputData
+
+data=normalizeData(data)
+
 X = data[:,input_indices]
 Y = data[:,-1]
 
@@ -100,12 +109,6 @@ Y_test = np.append(Y_test, Y[132000:180000], axis=0)
 
 
 
-normalizer = np.array([ 230.0, 23000, 23000, 23000, 23000, 100000, 100000, 100000, 100000])
-X_train = X_train  / normalizer
-X_test = X_test / normalizer
-
-Y_train = Y_train / 30
-Y_test = Y_test / 30
 
 # plt.figure()
 # plt.plot(X_train[:,8])
