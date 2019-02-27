@@ -72,7 +72,7 @@ def import_log(folder):
 
 
 
-input_indices = range(9)
+input_indices = range(len(data[:,1])-2)
 
 
 # Import endurance FSG
