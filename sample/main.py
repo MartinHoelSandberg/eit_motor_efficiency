@@ -71,14 +71,11 @@ def import_log(folder):
     return data
 
 
-
-input_indices = range(len(data[:,1])-2)
-
-
 # Import endurance FSG
 folder = "./data/endurance fsg"
 data = import_log(folder)
 data = normalizeData(data)
+input_indices = range(len(data[:,1])-2)
 
 X = data[:,input_indices]
 Y = data[:,-1]
@@ -94,6 +91,7 @@ Y_test = Y[67000:110000]
 folder = "./data/FSS_endurance"
 data = import_log(folder)
 data=normalizeData(data)
+input_indices = range(len(data[:,1])-2)
 
 X = data[:,input_indices]
 Y = data[:,-1]
