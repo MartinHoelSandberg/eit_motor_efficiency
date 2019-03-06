@@ -24,49 +24,12 @@ else:
 from matplotlib import pyplot as plt
 
 
-def average_model(motor_rpm):
-    gear_ratio = 15.58
-    wheel_radius = 0.228
-    return np.mean(motor_rpm, axis=1) / gear_ratio / 60 * 2 * np.pi * wheel_radius
-
 def normalizeData (inputData):
     for i in range(0,len(inputData[0])):
         mini = min(inputData[:,i])
         maxi = max(inputData[:,i])
         inputData[:,i]=(inputData[:,i]-mini-(maxi-mini)/2)/(maxi-mini)*2
     return inputData
-
-def import_log(folder):
-    channels = [
-        "AMK_FL_Actual_velocity",
-        "AMK_FR_Actual_velocity",
-        "AMK_RL_Actual_velocity",
-        "AMK_RR_Actual_velocity",
-        "AMK_FL_Temp_Motor",
-        "AMK_FR_Temp_Motor",
-        "AMK_RL_Temp_Motor",
-        "AMK_RR_Temp_Motor",
-        "AMK_FL_Temp_Inverter",
-        "AMK_FR_Temp_Inverter",
-        "AMK_RL_Temp_Inverter",
-        "AMK_RR_Temp_Inverter",
-        "AMK_FL_Setpoint_positive_torque_limit",
-        "AMK_FR_Setpoint_positive_torque_limit",
-        "AMK_RL_Setpoint_positive_torque_limit",
-        "AMK_RR_Setpoint_positive_torque_limit"
-          ]
-    cell_number = 140
-    for i in range(0,cell_number):
-        channels.append("BMS_Cell_Temperature_" + str(i))
-    
-    channels.append("BMS_Tractive_System_Power")
-
-    filenames = [join(folder, channel) + ".csv" for channel in channels]
-
-    raw_data = csv_import.read_csv_files(filenames)
-    data = csv_import.create_single_table(raw_data)
-
-    return data
 
 data = data_storage.load_data_set("training")
 input_indices = range(1,156)
