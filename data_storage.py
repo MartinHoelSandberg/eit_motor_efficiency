@@ -57,6 +57,14 @@ def add_to_dataset():
     folder = path.join(data_dir, log_name)
 
     channels = [
+        "AMK_FL_Setpoint_positive_torque_limit",
+        "AMK_FR_Setpoint_positive_torque_limit",
+        "AMK_RL_Setpoint_positive_torque_limit",
+        "AMK_RR_Setpoint_positive_torque_limit",
+        "AMK_FL_Setpoint_negative_torque_limit",
+        "AMK_FR_Setpoint_negative_torque_limit",
+        "AMK_RL_Setpoint_negative_torque_limit",
+        "AMK_RR_Setpoint_negative_torque_limit",
         "AMK_FL_Actual_velocity",
         "AMK_FR_Actual_velocity",
         "AMK_RL_Actual_velocity",
@@ -68,16 +76,12 @@ def add_to_dataset():
         "AMK_FL_Temp_Inverter",
         "AMK_FR_Temp_Inverter",
         "AMK_RL_Temp_Inverter",
-        "AMK_RR_Temp_Inverter",
-        "AMK_FL_Setpoint_positive_torque_limit",
-        "AMK_FR_Setpoint_positive_torque_limit",
-        "AMK_RL_Setpoint_positive_torque_limit",
-        "AMK_RR_Setpoint_positive_torque_limit",
+        "AMK_RR_Temp_Inverter"
         ]
     cell_number = 140
     for i in range(0,cell_number):
         channels.append("BMS_Cell_Temperature_" + str(i))
-        
+
     channels.append("BMS_Tractive_System_Power")
 
 
