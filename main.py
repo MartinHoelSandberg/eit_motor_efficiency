@@ -1,11 +1,9 @@
 import numpy as np
-import data_storage.py
+import data_storage
 from os import listdir
 from os.path import join
 from numpy import genfromtxt
 import glob
-
-import analyze_csv as csv_import
 
 from keras.models import Sequential
 from keras.layers import Dense, Activation, LSTM
@@ -72,8 +70,15 @@ def import_log(folder):
 
 data = data_storage.load_data_set("training")
 input_indices = range(1,156)
-X = data[:,input_indices]
-Y = data[:,-1]
+data=normalizeData(data)
+X_train = data[:,input_indices]
+Y_train = data[:,-1]
+
+data = data_storage.load_data_set("test")
+input_indices = range(1,156)
+data=normalizeData(data)
+X_test = data[:,input_indices]
+Y_test = data[:,-1]
 
 # Import endurance FSG
 """folder = "./data/endurance fsg"
@@ -117,7 +122,7 @@ model = Sequential([
     Dense(5),
     # Activation('relu'),
     Dense(1),
-    Activation('relu')
+    Activation('tanh')
 ])
 
 model.compile(optimizer='adam',
@@ -148,6 +153,5 @@ plt.plot(np.append(np.zeros(recursive_depth), y_train))
 plt.figure(2)
 plt.plot(Y_test)
 plt.plot(np.append(np.zeros(recursive_depth), y_test))
-plt.plot(average_model(X_test[1:5]))
 
 plt.show()
