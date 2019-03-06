@@ -37,7 +37,6 @@ def normalizeData (inputData):
         inputData[:,i]=(inputData[:,i]-mini-(maxi-mini)/2)/(maxi-mini)*2
     return inputData
 
-
 def import_log(folder):
     channels = [
         "AMK_FL_Actual_velocity",
@@ -62,7 +61,6 @@ def import_log(folder):
         channels.append("BMS_Cell_Temperature_" + str(i))
     
     channels.append("BMS_Tractive_System_Power")
-    print(len(channels))
     filenames = [join(folder, channel) + ".csv" for channel in channels]
 
     raw_data = csv_import.read_csv_files(filenames)
@@ -74,11 +72,8 @@ def import_log(folder):
 # Import endurance FSG
 folder = "./data/endurance fsg"
 data = import_log(folder)
-
-print(data[:,0])
 data = normalizeData(data)
 input_indices = range(1,156)
-print(input_indices)
 
 X = data[:,input_indices]
 Y = data[:,-1]
@@ -106,17 +101,7 @@ X_test = np.append(X_test, X[132000:180000], axis=0)
 Y_test = np.append(Y_test, Y[132000:180000], axis=0)
 
 
-
-
-
-
-
-# plt.figure()
-# plt.plot(X_train[:,8])
-# plt.title("blæ")
-# plt.show()
-
-
+# KERAS stuff
 recursive_depth = 3
 model = Sequential([
     Dense(10, input_shape=(recursive_depth,len(input_indices),)),
