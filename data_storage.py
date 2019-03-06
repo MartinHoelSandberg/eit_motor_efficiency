@@ -104,6 +104,7 @@ def add_to_dataset():
 
         start_i = np.argmin(abs(data[:,0] - start_x))
         end_i = np.argmin(abs(data[:,0] - end_x))
+        print("Trimming data to selected area")
 
         trimmed_data = data[start_i:end_i,:]
 
@@ -111,22 +112,26 @@ def add_to_dataset():
         plt.plot(trimmed_data[:,0], trimmed_data[:,channel_index])
         plt.show()
 
-        looks_good = input("Does this look good? y, else drop: ")
+        looks_good = input("Does this look good? y, otherwise press another key: ")
 
         if looks_good != "y":
             continue
         
-        data_set_name = input("Name of data set: ")
+        data_set_name = input("Enter the name of the target data set: ")
         data_set_path = path.join(data_dir, data_set_name + ".npy")
 
         
         if path.exists(data_set_path):
+            print("Existing data set with same name found, appending.")
             data_set = np.load(data_set_path)
             data_set = np.append(data_set, trimmed_data, axis=0)
         else:
+            print("No exisiting data set found, creating a new one.")
             data_set = trimmed_data
         
+        print("Saving!")
         np.save(data_set_path, data_set)
+        print("Saved!")
     
 def load_data_set(name):
     data_set_path = path.join(data_dir, name + ".npy")
