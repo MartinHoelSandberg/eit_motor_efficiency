@@ -12,6 +12,8 @@ from keras.preprocessing.sequence import TimeseriesGenerator
 from keras.utils import plot_model
 
 from sys import platform as sys_pf
+
+from scipy.optimize import curve_fit
   
 
 from sys import platform as sys_pf
@@ -26,8 +28,8 @@ from matplotlib import pyplot as plt
 
 def normalizeData (inputData):
     for i in range(0,len(inputData[0])):
-        mini = min(inputData[:,i])
-        maxi = max(inputData[:,i])
+        mini = np.min(inputData[:,i])
+        maxi = np.max(inputData[:,i])
         inputData[:,i]=(inputData[:,i]-mini-(maxi-mini)/2)/(maxi-mini)*2
     return inputData
 
@@ -75,14 +77,27 @@ X_test = np.append(X_test, X[132000:180000], axis=0)
 Y_test = np.append(Y_test, Y[132000:180000], axis=0)
 """
 
+def curve(x, a, b):
+    return np.sum(x[:,1:5] * a * x[:,13:17], axis=1) + b
+
+plt.figure(1)
+plt.plot(X_train[:,0:4])
+plt.show()
+
+plt.figure(1)
+plt.plot(Y_train)
+plt.plot(curve(X_train, 0.5, 0))
+plt.show()
+
+
 # KERAS stuff
 recursive_depth = 3
 model = Sequential([
     Dense(10, input_shape=(recursive_depth,len(input_indices),)),
     # Activation('relu'),
-    LSTM(3),
+    LSTM(4),
     # Activation('relu'),
-    Dense(5),
+    Dense(4),
     # Activation('relu'),
     Dense(1),
     Activation('tanh')
@@ -103,7 +118,7 @@ data_gen_test = TimeseriesGenerator(X_test, Y_test,
                                batch_size=batch_size)                            
 
 
-model.fit_generator(data_gen_train, epochs=20)
+model.fit_generator(data_gen_train, epochs=2)
 
 
 y_train = model.predict_generator(data_gen_train)
@@ -112,9 +127,11 @@ y_test = model.predict_generator(data_gen_test)
 plt.figure(1)
 plt.plot(Y_train)
 plt.plot(np.append(np.zeros(recursive_depth), y_train))
+plt.plot(curve(X_train, 0.5, 0))
 
 plt.figure(2)
 plt.plot(Y_test)
 plt.plot(np.append(np.zeros(recursive_depth), y_test))
+
 
 plt.show()

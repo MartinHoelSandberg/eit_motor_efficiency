@@ -73,6 +73,10 @@ def add_to_dataset():
         "AMK_FR_Setpoint_positive_torque_limit",
         "AMK_RL_Setpoint_positive_torque_limit",
         "AMK_RR_Setpoint_positive_torque_limit",
+        "AMK_FL_Setpoint_negative_torque_limit",
+        "AMK_FR_Setpoint_negative_torque_limit",
+        "AMK_RL_Setpoint_negative_torque_limit",
+        "AMK_RR_Setpoint_negative_torque_limit",
         ]
     cell_number = 140
     for i in range(0,cell_number):
