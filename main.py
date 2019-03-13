@@ -6,7 +6,7 @@ from numpy import genfromtxt
 import glob
 
 from keras.models import Sequential
-from keras.layers import Dense, Activation, LSTM
+from keras.layers import Dense, Activation, LSTM, Dropout
 from keras.preprocessing.sequence import TimeseriesGenerator
 
 from keras.utils import plot_model
@@ -23,6 +23,7 @@ else:
 
 from matplotlib import pyplot as plt
 
+# Combines positive and negative torque limit to the same channels
 def torque_setpoint (data):
     for i in range(0,len(data[:,0])):
         if data[i,1] > 0:
@@ -37,7 +38,7 @@ def torque_setpoint (data):
     new_data = np.append(new_data, data[:,5:], axis = 1)
     return new_data
 
-
+# Finds the extremes of training data to use as normaliser -1 to 1
 def normalizeData (inputData):
     extreme = np.zeros((2,len(inputData[0])))
     for i in range(0,len(inputData[0])):
@@ -51,19 +52,19 @@ def normalizeData (inputData):
 # Import training and test data
 input_indices = range(1,156)
 
-
 data = data_storage.load_data_set("training")
 data = torque_setpoint(data)
 extreme = normalizeData(data)
 for i in range(1,len(data[0])):
+    # Normalises training data
     data[:,i]=(data[:,i]-extreme[0,i]-(extreme[1,i]-extreme[0,i])/2)/(extreme[1,i]-extreme[0,i])*2
 X_train = data[:,input_indices]
 Y_train = data[:,-1]
 
 data = data_storage.load_data_set("test")
 data = torque_setpoint(data)
-#data = normalizeData(data)
 for i in range(1,len(data[0])):
+    # Normalises test data with extremes from training data
     data[:,i]=(data[:,i]-extreme[0,i]-(extreme[1,i]-extreme[0,i])/2)/(extreme[1,i]-extreme[0,i])*2
 X_test = data[:,input_indices]
 Y_test = data[:,-1]
@@ -73,6 +74,7 @@ recursive_depth = 3
 model = Sequential([
     Dense(10, input_shape=(recursive_depth,len(input_indices),)),
     # Activation('relu'),
+    Dropout(0.1),
     LSTM(3),
     # Activation('relu'),
     Dense(5),
@@ -86,7 +88,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 
-batch_size = 256
+batch_size = 1000
 data_gen_train = TimeseriesGenerator(X_train, Y_train,
                                length=recursive_depth,
                                batch_size=batch_size)
@@ -96,7 +98,7 @@ data_gen_test = TimeseriesGenerator(X_test, Y_test,
                                batch_size=batch_size)                            
 
 
-model.fit_generator(data_gen_train, epochs=20)
+model.fit_generator(data_gen_train, epochs=40)
 
 
 y_train = model.predict_generator(data_gen_train)
