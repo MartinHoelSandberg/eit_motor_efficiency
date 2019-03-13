@@ -88,7 +88,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 
-batch_size = 1000
+batch_size = 100
 data_gen_train = TimeseriesGenerator(X_train, Y_train,
                                length=recursive_depth,
                                batch_size=batch_size)
@@ -98,7 +98,7 @@ data_gen_test = TimeseriesGenerator(X_test, Y_test,
                                batch_size=batch_size)                            
 
 
-model.fit_generator(data_gen_train, epochs=40)
+model.fit_generator(data_gen_train, epochs=50)
 
 
 y_train = model.predict_generator(data_gen_train)
