@@ -71,7 +71,7 @@ X_test = data[:,input_indices]
 Y_test = data[:,-1]
 
 # KERAS stuff
-nnModel = NeuralNetworkModel(input_indices)
+nnModel = NeuralNetworkConfig(input_indices)
 
 data_gen_train = TimeseriesGenerator(X_train, Y_train,
                                         length = nnModel.recursive_depth,
