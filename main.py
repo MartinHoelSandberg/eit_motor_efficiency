@@ -4,6 +4,7 @@ from os import listdir
 from os.path import join
 from numpy import genfromtxt
 import glob
+from neural_network_config import NeuralNetworkConfig
 
 from keras.models import Sequential
 from keras.layers import Dense, Activation, LSTM, Dropout
@@ -50,66 +51,47 @@ def normalizeData (inputData):
     return extreme
 
 # Import training and test data
-input_indices = range(1, 156)
+input_indices = range(1, 154)
 
 data = data_storage.load_data_set("training")
 data = torque_setpoint(data)
 extreme = normalizeData(data)
 for i in range(1, len(data[0])):
     # Normalises training data
-    data[:,i]=(data[:,i] - extreme[0,i] - (extreme[1, i] - extreme[0, i]) / 2) / (extreme[1, i] - extreme[0, i]) * 2
+    data[:,i] = (data[:,i] - extreme[0,i] - (extreme[1, i] - extreme[0, i]) / 2) / (extreme[1, i] - extreme[0, i]) * 2
 X_train = data[:,input_indices]
 Y_train = data[:,-1]
 
 data = data_storage.load_data_set("test")
 data = torque_setpoint(data)
-for i in range(1,len(data[0])):
+for i in range(1, len(data[0])):
     # Normalises test data with extremes from training data
     data[:,i]=(data[:,i] - extreme[0, i] - (extreme[1, i] - extreme[0, i]) / 2) / (extreme[1, i] - extreme[0, i]) * 2
 X_test = data[:,input_indices]
 Y_test = data[:,-1]
 
 # KERAS stuff
-recursive_depth = 3
-model = Sequential([
-    Dense(10, input_shape=(recursive_depth, len(input_indices),)),
-    # Activation('relu'),
-    Dropout(0.1),
-    LSTM(3),
-    # Activation('relu'),
-    Dense(5),
-    # Activation('relu'),
-    Dense(1),
-    Activation('tanh')
-])
+nnModel = NeuralNetworkModel(input_indices)
 
-model.compile(optimizer='adam',
-              loss='mse',
-              metrics=['accuracy'])
-
-
-batch_size = 100
 data_gen_train = TimeseriesGenerator(X_train, Y_train,
-                               length=recursive_depth,
-                               batch_size=batch_size)
+                                        length = nnModel.recursive_depth,
+                                        batch_size = nnModel.batch_size)
 
 data_gen_test = TimeseriesGenerator(X_test, Y_test,
-                               length=recursive_depth,
-                               batch_size=batch_size)                            
+                                        length = nnModel.recursive_depth,
+                                        batch_size = nnModel.batch_size)                            
 
+nnModel.architecture.fit_generator(data_gen_train, epochs = nnModel.epochs)
 
-model.fit_generator(data_gen_train, epochs=50)
-
-
-y_train = model.predict_generator(data_gen_train)
-y_test = model.predict_generator(data_gen_test)
+y_train = nnModel.architecture.predict_generator(data_gen_train)
+y_test = nnModel.architecture.predict_generator(data_gen_test)
 
 plt.figure(1)
 plt.plot(Y_train)
-plt.plot(np.append(np.zeros(recursive_depth), y_train))
+plt.plot(np.append(np.zeros(nnModel.recursive_depth), y_train))
 
 plt.figure(2)
 plt.plot(Y_test)
-plt.plot(np.append(np.zeros(recursive_depth), y_test))
+plt.plot(np.append(np.zeros(nnModel.recursive_depth), y_test))
 
 plt.show()
