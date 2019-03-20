@@ -6,7 +6,7 @@ from numpy import genfromtxt
 import glob
 
 from keras.models import Sequential
-from keras.layers import Dense, Activation, LSTM
+from keras.layers import Dense, Activation, LSTM, Dropout
 from keras.preprocessing.sequence import TimeseriesGenerator
 
 from keras.utils import plot_model
@@ -23,63 +23,58 @@ else:
 
 from matplotlib import pyplot as plt
 
+# Combines positive and negative torque limit to the same channels
+def torque_setpoint (data):
+    for i in range(0,len(data[:,0])):
+        if data[i,1] > 0:
+            data[i,5] = data[i,1]
+        if data[i,2] > 0:
+            data[i,6] = data[i,2]
+        if data[i,3] > 0:
+            data[i,7] = data[i,3]
+        if data[i,4] > 0:
+            data[i,8] = data[i,4]
+    new_data = data[:,0, np.newaxis]
+    new_data = np.append(new_data, data[:,5:], axis = 1)
+    return new_data
 
+# Finds the extremes of training data to use as normaliser -1 to 1
 def normalizeData (inputData):
+    extreme = np.zeros((2,len(inputData[0])))
     for i in range(0,len(inputData[0])):
-        mini = min(inputData[:,i])
-        maxi = max(inputData[:,i])
-        inputData[:,i]=(inputData[:,i]-mini-(maxi-mini)/2)/(maxi-mini)*2
-    return inputData
+        extreme[0,i] = min(inputData[:,i])*1.2
+        extreme[1,i] = max(inputData[:,i])*1.2
+        #mini = min(inputData[:,i])
+        #maxi = max(inputData[:,i])
+        #inputData[:,i]=(inputData[:,i]-mini-(maxi-mini)/2)/(maxi-mini)*2
+    return extreme
+
+# Import training and test data
+input_indices = range(1,156)
 
 data = data_storage.load_data_set("training")
-input_indices = range(1,156)
-data=normalizeData(data)
+data = torque_setpoint(data)
+extreme = normalizeData(data)
+for i in range(1,len(data[0])):
+    # Normalises training data
+    data[:,i]=(data[:,i]-extreme[0,i]-(extreme[1,i]-extreme[0,i])/2)/(extreme[1,i]-extreme[0,i])*2
 X_train = data[:,input_indices]
 Y_train = data[:,-1]
 
 data = data_storage.load_data_set("test")
-input_indices = range(1,156)
-data=normalizeData(data)
+data = torque_setpoint(data)
+for i in range(1,len(data[0])):
+    # Normalises test data with extremes from training data
+    data[:,i]=(data[:,i]-extreme[0,i]-(extreme[1,i]-extreme[0,i])/2)/(extreme[1,i]-extreme[0,i])*2
 X_test = data[:,input_indices]
 Y_test = data[:,-1]
-
-# Import endurance FSG
-"""folder = "./data/endurance fsg"
-data = import_log(folder)
-data = normalizeData(data)
-input_indices = range(1,156)
-
-X = data[:,input_indices]
-Y = data[:,-1]
-
-X_train = X[4000:54000]
-Y_train = Y[4000:54000]
-
-X_test = X[67000:110000]
-Y_test = Y[67000:110000]
-
-
-# Import endurance Fss
-folder = "./data/FSS_endurance"
-data = import_log(folder)
-data=normalizeData(data)
-input_indices = range(1,156)
-
-X = data[:,input_indices]
-Y = data[:,-1]
-
-X_train = np.append(X_train, X[69000:107000], axis=0)
-Y_train = np.append(Y_train, Y[69000:107000])
-
-X_test = np.append(X_test, X[132000:180000], axis=0)
-Y_test = np.append(Y_test, Y[132000:180000], axis=0)
-"""
 
 # KERAS stuff
 recursive_depth = 3
 model = Sequential([
     Dense(10, input_shape=(recursive_depth,len(input_indices),)),
     # Activation('relu'),
+    Dropout(0.1),
     LSTM(3),
     # Activation('relu'),
     Dense(5),
@@ -93,7 +88,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 
-batch_size = 256
+batch_size = 100
 data_gen_train = TimeseriesGenerator(X_train, Y_train,
                                length=recursive_depth,
                                batch_size=batch_size)
@@ -103,7 +98,7 @@ data_gen_test = TimeseriesGenerator(X_test, Y_test,
                                batch_size=batch_size)                            
 
 
-model.fit_generator(data_gen_train, epochs=20)
+model.fit_generator(data_gen_train, epochs=50)
 
 
 y_train = model.predict_generator(data_gen_train)

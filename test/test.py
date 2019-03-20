@@ -6,10 +6,17 @@ f = [-13,-8,4,8,13]
 g = [-14,-9,5,9,14]
 c = np.array([a,b,e,f,g])
 d = c*0
+if a[0] < b[0]:
+    a = b
+else:
+    b = a
+c = np.array([a,b,e,f,g])
+print(c)
+
 
 for i in range(0,len(c[0])):
     cmin = min(c[:,i])
     cmax = max(c[:,i])
     d[:,i] = (c[:,i]-cmin-(cmax-cmin)/2)/(cmax-cmin)*2
-x = range(len(d[1,:])-2)
+x = c[:,0:2]
 print(x)
