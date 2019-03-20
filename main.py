@@ -25,39 +25,39 @@ from matplotlib import pyplot as plt
 
 # Combines positive and negative torque limit to the same channels
 def torque_setpoint (data):
-    for i in range(0,len(data[:,0])):
-        if data[i,1] > 0:
-            data[i,5] = data[i,1]
-        if data[i,2] > 0:
-            data[i,6] = data[i,2]
-        if data[i,3] > 0:
-            data[i,7] = data[i,3]
+    for i in range(0, len(data[:,0])):
+        if data[i, 1] > 0:
+            data[i, 5] = data[i, 1]
+        if data[i, 2] > 0:
+            data[i, 6] = data[i, 2]
+        if data[i, 3] > 0:
+            data[i, 7] = data[i, 3]
         if data[i,4] > 0:
-            data[i,8] = data[i,4]
+            data[i, 8] = data[i, 4]
     new_data = data[:,0, np.newaxis]
     new_data = np.append(new_data, data[:,5:], axis = 1)
     return new_data
 
 # Finds the extremes of training data to use as normaliser -1 to 1
 def normalizeData (inputData):
-    extreme = np.zeros((2,len(inputData[0])))
-    for i in range(0,len(inputData[0])):
-        extreme[0,i] = min(inputData[:,i])*1.2
-        extreme[1,i] = max(inputData[:,i])*1.2
+    extreme = np.zeros((2, len(inputData[0])))
+    for i in range(0, len(inputData[0])):
+        extreme[0, i] = min(inputData[:,i]) * 1.2
+        extreme[1, i] = max(inputData[:,i]) * 1.2
         #mini = min(inputData[:,i])
         #maxi = max(inputData[:,i])
         #inputData[:,i]=(inputData[:,i]-mini-(maxi-mini)/2)/(maxi-mini)*2
     return extreme
 
 # Import training and test data
-input_indices = range(1,156)
+input_indices = range(1, 156)
 
 data = data_storage.load_data_set("training")
 data = torque_setpoint(data)
 extreme = normalizeData(data)
-for i in range(1,len(data[0])):
+for i in range(1, len(data[0])):
     # Normalises training data
-    data[:,i]=(data[:,i]-extreme[0,i]-(extreme[1,i]-extreme[0,i])/2)/(extreme[1,i]-extreme[0,i])*2
+    data[:,i]=(data[:,i] - extreme[0,i] - (extreme[1, i] - extreme[0, i]) / 2) / (extreme[1, i] - extreme[0, i]) * 2
 X_train = data[:,input_indices]
 Y_train = data[:,-1]
 
@@ -65,14 +65,14 @@ data = data_storage.load_data_set("test")
 data = torque_setpoint(data)
 for i in range(1,len(data[0])):
     # Normalises test data with extremes from training data
-    data[:,i]=(data[:,i]-extreme[0,i]-(extreme[1,i]-extreme[0,i])/2)/(extreme[1,i]-extreme[0,i])*2
+    data[:,i]=(data[:,i] - extreme[0, i] - (extreme[1, i] - extreme[0, i]) / 2) / (extreme[1, i] - extreme[0, i]) * 2
 X_test = data[:,input_indices]
 Y_test = data[:,-1]
 
 # KERAS stuff
 recursive_depth = 3
 model = Sequential([
-    Dense(10, input_shape=(recursive_depth,len(input_indices),)),
+    Dense(10, input_shape=(recursive_depth, len(input_indices),)),
     # Activation('relu'),
     Dropout(0.1),
     LSTM(3),
