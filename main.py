@@ -86,6 +86,9 @@ nnModel.architecture.fit_generator(data_gen_train, epochs = nnModel.epochs)
 y_train = nnModel.architecture.predict_generator(data_gen_train)
 y_test = nnModel.architecture.predict_generator(data_gen_test)
 
+np.savetxt("predikert.csv", y_test, delimiter=",")
+np.savetxt("faktisk.csv", y_test, delimiter=",")
+
 plt.figure(1)
 plt.plot(Y_train)
 plt.plot(np.append(np.zeros(nnModel.recursive_depth), y_train))
