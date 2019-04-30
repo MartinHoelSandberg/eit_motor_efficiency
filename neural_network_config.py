@@ -13,18 +13,17 @@ class NeuralNetworkConfig:
         self.optimizer = "adam"
         self.loss = "mse"
         self.metrics = ["accuracy"]
-        self.activation = "tanh"
 
         self.architecture = Sequential([
             Dense(10, input_shape=(self.recursive_depth, len(input_indices),)),
-            # Activation('relu'),
+            Activation('sigmoid'),
             Dropout(0.1),
-            LSTM(3),
-            # Activation('relu'),
+            LSTM(7),
+            Activation('sigmoid'),
             Dense(5),
-            # Activation('relu'),
+            Activation('sigmoid'),
             Dense(1),
-            Activation(self.activation)
+            Activation('tanh')
         ])
 
         self.architecture.compile(optimizer = self.optimizer,
